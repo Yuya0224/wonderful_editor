@@ -29,7 +29,7 @@
 #  index_users_on_reset_password_token  (reset_password_token) UNIQUE
 #  index_users_on_uid_and_provider      (uid,provider) UNIQUE
 #
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe User, type: :model do
   # pending "add some examples to (or delete) #{__FILE__}"
@@ -40,7 +40,6 @@ RSpec.describe User, type: :model do
       # binding.pry
       expect(user).to be_valid
     end
-
   end
 
   context "nameを指定していないとき" do
@@ -51,7 +50,6 @@ RSpec.describe User, type: :model do
       # binding.pry
       expect(user).to be_invalid
     end
-
   end
 
   context "emailを指定していないとき" do
@@ -62,7 +60,6 @@ RSpec.describe User, type: :model do
       # binding.pry
       expect(user).to be_invalid
     end
-
   end
 
   context "passwordを指定していないとき" do
@@ -73,11 +70,5 @@ RSpec.describe User, type: :model do
       # binding.pry
       expect(user).to be_invalid
     end
-
   end
-
-
-
-
-
 end
