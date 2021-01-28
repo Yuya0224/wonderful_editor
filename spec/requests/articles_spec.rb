@@ -138,7 +138,7 @@ RSpec.describe "Articles", type: :request do
     it "更新順に記事を取得できる" do
       subject
       # binding.pry
-      # res = JSON.parse(response.body)
+      res = JSON.parse(response.body)
       # expect(res.length).to eq 3
       # binding.pry
 
