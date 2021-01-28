@@ -17,6 +17,10 @@
 #
 #  fk_rails_...  (user_id => users.id)
 #
-class ArticleSerializer < ActiveModel::Serializer
-  attributes :id, :title, :body
-end
+# class Api::V1::ArticleSerializer < ActiveModel::Serializer
+#   attributes :id, :title, :body
+
+#   has_many :comments
+#   has_many :article_likes
+#   belongs_to :user
+# end
