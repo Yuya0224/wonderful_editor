@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # == Schema Information
 #
 # Table name: users
@@ -31,19 +29,11 @@
 #  index_users_on_reset_password_token  (reset_password_token) UNIQUE
 #  index_users_on_uid_and_provider      (uid,provider) UNIQUE
 #
-class User < ApplicationRecord
-  extend Devise::Models
-  validates :name, presence: true
-  validates :email, presence: true
-  validates :password, presence: true
+FactoryBot.define do
+  factory :user do
+    name { Faker::Name.name }
+    email { Faker::Internet.email }
+    password {Faker::Internet.password}
 
-
-  has_many :articles, dependent: :destroy
-  has_many :article_likes, dependent: :destroy
-  has_many :comments, dependent: :destroy
-  # Include default devise modules. Others available are:
-  # :confirmable, :lockable, :timeoutable and :omniauthable
-  devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :trackable, :validatable
-  include DeviseTokenAuth::Concerns::User
+  end
 end
