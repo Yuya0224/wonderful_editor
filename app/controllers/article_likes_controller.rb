@@ -39,6 +39,7 @@ class ArticleLikesController < ApplicationController
   end
 
   private
+
     # Use callbacks to share common setup or constraints between actions.
     def set_article_like
       @article_like = ArticleLike.find(params[:id])
