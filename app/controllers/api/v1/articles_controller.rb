@@ -13,5 +13,24 @@ module Api::V1
       article = Article.find(params[:id])
       render json: article, each_serializer: Api::V1::ArticleSerializer
     end
+
+    def create
+      # binding.pry
+
+      article = dummy.articles.create!(article_params)
+      # binding.pry
+
+      # 上記は下でも書き換え可能
+      # article = Article.create!(article_params, user_id: current_user.id])
+
+      render json: article, serializer: Api::V1::ArticleSerializer
+    end
+
+    private
+
+      def article_params
+        # binding.pry
+        params.require(:article).permit(:body, :title)
+      end
   end
 end
