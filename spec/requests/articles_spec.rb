@@ -58,4 +58,24 @@ RSpec.describe "Articles", type: :request do
       end
     end
   end
+
+  describe  "POST /api/v1/articles" do
+    # binding.pry
+    subject { post(api_v1_articles_path, params: params) }
+
+    context "適切なパラメータを送信したとき" do
+      let(:params) { { article: FactoryBot.attributes_for(:article) } }
+      let(:current_user) { create(:user) }
+      it "記事のレコードが作成できる" do
+        # binding.pry
+        allow_any_instance_of(Api::V1::BaseApiController).to receive(:dummy).and_return(current_user)
+        expect { subject }.to change { Article.where(user_id: current_user.id).count }.by(1)
+        # binding.pry
+        res = JSON.parse(response.body)
+        expect(res["title"]).to eq params[:article][:title]
+        expect(res["body"]).to eq params[:article][:body]
+        expect(response).to have_http_status(:ok)
+      end
+    end
+  end
 end
