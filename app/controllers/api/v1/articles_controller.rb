@@ -26,6 +26,14 @@ module Api::V1
       render json: article, serializer: Api::V1::ArticleSerializer
     end
 
+    def update
+      # binding.pry
+      article = dummy.articles.find(params[:id])
+      # binding.pry
+      article.update!(article_params)
+      render json: article, serializer: Api::V1::ArticleSerializer
+    end
+
     private
 
       def article_params

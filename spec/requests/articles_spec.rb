@@ -78,4 +78,38 @@ RSpec.describe "Articles", type: :request do
       end
     end
   end
+
+  describe "PATCH /api/v1/articles/:id" do
+    # binding.pry
+    subject { patch(api_v1_article_path(article_id), params: params) }
+
+    let(:article_id) { article.id }
+    let!(:current_user) { create(:user) }
+    let(:params) do
+      { article: { body: "xxxxxx", title: "yyyyyyyyyyy" } }
+      # { article: FactoryBot.attributes_for(:article)}
+    end
+    before { allow_any_instance_of(Api::V1::BaseApiController).to receive(:dummy).and_return(current_user) }
+
+    context "ログインユーザーの記事があるとき" do
+      let(:article) { create(:article, user: current_user) }
+      it "記事が更新できる" do
+        # binding.pry
+        expect { subject }.to change { Article.find(article_id).body }.from(article.body).to(params[:article][:body]) &
+                              change { Article.find(article_id).title }.from(article.title).to(params[:article][:title])
+        expect(response).to have_http_status(:ok)
+
+        # binding.pry
+      end
+    end
+
+    context "ログインユーザーの記事がないとき" do
+      let!(:other_user) { create(:user) }
+      let(:article) { create(:article, user: other_user) }
+      it "記事が更新できない" do
+        # binding.pry
+        expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+  end
 end
