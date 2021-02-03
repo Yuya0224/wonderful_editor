@@ -34,6 +34,13 @@ module Api::V1
       render json: article, serializer: Api::V1::ArticleSerializer
     end
 
+    def destroy
+      article = dummy.articles.find(params[:id])
+      # binding.pry
+      article.destroy!
+      render json: article, serializer: Api::V1::ArticleSerializer
+    end
+
     private
 
       def article_params
