@@ -73,3 +73,6 @@ RSpec/ReturnFromStub:
 
 RSpec/LetSetup:
   Enabled: false
+
+RSpec/MultipleMemoizedHelpers:
+  Max: 6

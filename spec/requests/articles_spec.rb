@@ -61,14 +61,17 @@ RSpec.describe "Articles", type: :request do
 
   describe  "POST /api/v1/articles" do
     # binding.pry
-    subject { post(api_v1_articles_path, params: params) }
+    subject { post(api_v1_articles_path, params: params, headers: headers) }
+    # subject { post(api_v1_articles_path, params: params) }
 
     context "適切なパラメータを送信したとき" do
       let(:params) { { article: FactoryBot.attributes_for(:article) } }
-      let(:current_user) { create(:user) }
+      let(:headers) { current_user.create_new_auth_token }
+      let!(:current_user) { create(:user) }
       it "記事のレコードが作成できる" do
+        # subject
         # binding.pry
-        allow_any_instance_of(Api::V1::BaseApiController).to receive(:dummy).and_return(current_user)
+        # allow_any_instance_of(Api::V1::BaseApiController).to receive(:dummy).and_return(current_user)
         expect { subject }.to change { Article.where(user_id: current_user.id).count }.by(1)
         # binding.pry
         res = JSON.parse(response.body)
@@ -81,19 +84,21 @@ RSpec.describe "Articles", type: :request do
 
   describe "PATCH /api/v1/articles/:id" do
     # binding.pry
-    subject { patch(api_v1_article_path(article_id), params: params) }
+    subject { patch(api_v1_article_path(article_id), params: params, headers: headers) }
 
     let(:article_id) { article.id }
+    let(:headers) { current_user.create_new_auth_token }
     let!(:current_user) { create(:user) }
     let(:params) do
       { article: { body: "xxxxxx", title: "yyyyyyyyyyy" } }
       # { article: FactoryBot.attributes_for(:article)}
     end
-    before { allow_any_instance_of(Api::V1::BaseApiController).to receive(:dummy).and_return(current_user) }
+    # before { allow_any_instance_of(Api::V1::BaseApiController).to receive(:dummy).and_return(current_user) }
 
     context "ログインユーザーの記事があるとき" do
       let(:article) { create(:article, user: current_user) }
       it "記事が更新できる" do
+        # subject
         # binding.pry
         expect { subject }.to change { Article.find(article_id).body }.from(article.body).to(params[:article][:body]) &
                               change { Article.find(article_id).title }.from(article.title).to(params[:article][:title])
@@ -114,15 +119,17 @@ RSpec.describe "Articles", type: :request do
   end
 
   describe "DELETE /api/v1/articles/:id" do
-    subject { delete(api_v1_article_path(article_id)) }
+    subject { delete(api_v1_article_path(article_id), headers: headers) }
 
+    let(:headers) { current_user.create_new_auth_token }
     let(:article_id) { article.id }
     let(:current_user) { create(:user) }
-    before { allow_any_instance_of(Api::V1::BaseApiController).to receive(:dummy).and_return(current_user) }
+    # before { allow_any_instance_of(Api::V1::BaseApiController).to receive(:dummy).and_return(current_user) }
 
     context "ログインユーザーの記事があるとき" do
       let!(:article) { create(:article, user: current_user) }
       it "記事が削除できる" do
+        # subject
         # binding.pry
         expect { subject }.to change { Article.where(user_id: current_user.id).count }.by(-1)
         # binding.pry
