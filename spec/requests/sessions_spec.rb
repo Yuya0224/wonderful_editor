@@ -18,7 +18,7 @@ RSpec.describe "Api::V1::Auth::Sessions", type: :request do
 
         header = response.header
         expect(header["access-token"]).to be_present
-        expect(header["client"]).to
+        expect(header["client"]).to be_present
         expect(response).to have_http_status(:ok)
       end
     end
@@ -61,38 +61,34 @@ RSpec.describe "Api::V1::Auth::Sessions", type: :request do
   end
 
   describe "DELETE /api/v1/auth/sign_out" do
-    subject { delete(destroy_api_v1_user_session_path , headers: headers)}
+    subject { delete(destroy_api_v1_user_session_path, headers: headers) }
 
     context "headerにuid,client,access-tokenがあるとき" do
-      let!(:headers) { user.create_new_auth_token}
-      let(:user) { create(:user)}
+      let!(:headers) { user.create_new_auth_token }
+      let(:user) { create(:user) }
       it "ログアウトできる" do
-      #   subject
-      # binding.pry
-      expect { subject }.to change {user.reload.tokens}.from(be_present).to(be_blank)
-      binding.pry
-
+        #   subject
+        # binding.pry
+        expect { subject }.to change { user.reload.tokens }.from(be_present).to(be_blank)
+        # binding.pry
       end
-
     end
 
     context "headerにuid,client,access-tokenがないとき" do
-      let!(:token) { user.create_new_auth_token}
-      let!(:headers) { {"access-token"=>"","client"=>"","uid"=>""} }
-      let(:user) { create(:user)}
-      fit "ログアウトできる" do
+      let!(:token) { user.create_new_auth_token }
+      let!(:headers) { { "access-token" => "", "client" => "", "uid" => "" } }
+      let(:user) { create(:user) }
+      it "ログアウトできない" do
         subject
-        expect(response).to have_http_status(404)
+        expect(response).to have_http_status(:not_found)
 
         res = JSON.parse(response.body)
         expect(res["errors"]).to include "User was not found or was not logged in."
 
-      # binding.pry
-      # expect { subject }.to change {user.reload.tokens}.from(be_present).to(be_blank)
-      # binding.pry
-
+        # binding.pry
+        # expect { subject }.to change {user.reload.tokens}.from(be_present).to(be_blank)
+        # binding.pry
       end
-
     end
   end
 end
