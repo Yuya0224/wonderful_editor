@@ -48,39 +48,39 @@ RSpec.describe "/article_likes", type: :request do
     end
   end
 
-  describe "POST /create" do
-    context "with valid parameters" do
-      it "creates a new ArticleLike" do
-        expect {
-          post article_likes_url,
-               params: { article_like: valid_attributes }, headers: valid_headers, as: :json
-        }.to change { ArticleLike.count }.by(1)
-      end
+  # describe "POST /create" do
+  #   context "with valid parameters" do
+  #     it "creates a new ArticleLike" do
+  #       expect {
+  #         post article_likes_url,
+  #              params: { article_like: valid_attributes }, headers: valid_headers, as: :json
+  #       }.to change { ArticleLike.count }.by(1)
+  #     end
 
-      # it "renders a JSON response with the new article_like" do
-      #   post article_likes_url,
-      #        params: { article_like: valid_attributes }, headers: valid_headers, as: :json
-      #   expect(response).to have_http_status(:created)
-      #   expect(response.content_type).to match(a_string_including("application/json"))
-      # end
-    end
+  #     # it "renders a JSON response with the new article_like" do
+  #     #   post article_likes_url,
+  #     #        params: { article_like: valid_attributes }, headers: valid_headers, as: :json
+  #     #   expect(response).to have_http_status(:created)
+  #     #   expect(response.content_type).to match(a_string_including("application/json"))
+  #     # end
+  #   end
 
-    context "with invalid parameters" do
-      it "does not create a new ArticleLike" do
-        expect {
-          post article_likes_url,
-               params: { article_like: invalid_attributes }, as: :json
-        }.to change { ArticleLike.count }.by(0)
-      end
+  #   context "with invalid parameters" do
+  #     it "does not create a new ArticleLike" do
+  #       expect {
+  #         post article_likes_url,
+  #              params: { article_like: invalid_attributes }, as: :json
+  #       }.to change { ArticleLike.count }.by(0)
+  #     end
 
-      # it "renders a JSON response with errors for the new article_like" do
-      #   post article_likes_url,
-      #        params: { article_like: invalid_attributes }, headers: valid_headers, as: :json
-      #   expect(response).to have_http_status(:unprocessable_entity)
-      #   expect(response.content_type).to eq("application/json")
-      # end
-    end
-  end
+  #     # it "renders a JSON response with errors for the new article_like" do
+  #     #   post article_likes_url,
+  #     #        params: { article_like: invalid_attributes }, headers: valid_headers, as: :json
+  #     #   expect(response).to have_http_status(:unprocessable_entity)
+  #     #   expect(response.content_type).to eq("application/json")
+  #     # end
+  #   end
+  # end
 
   describe "PATCH /update" do
     context "with valid parameters" do
