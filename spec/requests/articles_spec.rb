@@ -4,12 +4,14 @@ RSpec.describe "Articles", type: :request do
   describe "GET /api/v1/articles" do
     subject { get(api_v1_articles_path) }
 
-    let!(:article1) { create(:article, updated_at: 1.days.ago) }
-    let!(:article2) { create(:article, updated_at: 3.days.ago) }
-    let!(:article3) { create(:article, updated_at: 2.days.ago) }
+    let!(:article1) { create(:article, updated_at: 1.days.ago, state: 1) }
+    let!(:article2) { create(:article, updated_at: 3.days.ago, state: 1) }
+    let!(:article3) { create(:article, updated_at: 2.days.ago, state: 1) }
+
+    before { create(:article, :draft) }
 
     # before { create_list(:article, 3)}
-    it "更新順に記事を取得できる" do
+    it "公開しているとき、更新順に記事を取得できる" do
       subject
       # binding.pry
       res = JSON.parse(response.body)
@@ -30,22 +32,33 @@ RSpec.describe "Articles", type: :request do
   describe "GET /api/v1/articles/:id" do
     subject { get(api_v1_article_path(article_id)) }
 
-    context "指定した記事のidが存在した場合" do
+    context "指定した記事のidが存在している" do
       let(:article_id) { article.id }
-      let(:article) { create(:article) }
 
-      it "指定したidの詳細な記事を取得できる" do
-        subject
-        # binding.pry
-        res = JSON.parse(response.body)
+      context "公開している" do
+        let(:article) { create(:article, state: 1) }
 
-        expect(response).to have_http_status(:ok)
-        expect(res["id"]).to eq article.id
-        expect(res["title"]).to eq article.title
-        expect(res["body"]).to eq article.body
-        expect(res["updated_at"]).to be_present
-        expect(res["user"]["id"]).to eq article.user.id
-        expect(res["user"].keys).to eq ["id", "name", "email"]
+        it "指定したidの詳細な記事を取得できる" do
+          subject
+          # binding.pry
+          res = JSON.parse(response.body)
+
+          expect(response).to have_http_status(:ok)
+          expect(res["id"]).to eq article.id
+          expect(res["title"]).to eq article.title
+          expect(res["body"]).to eq article.body
+          expect(res["updated_at"]).to be_present
+          expect(res["user"]["id"]).to eq article.user.id
+          expect(res["user"].keys).to eq ["id", "name", "email"]
+        end
+      end
+
+      context "公開していないとき" do
+        let(:article) { create(:article, state: 0) }
+
+        it "記事を取得できない" do
+          expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
+        end
       end
     end
 
@@ -64,10 +77,12 @@ RSpec.describe "Articles", type: :request do
     subject { post(api_v1_articles_path, params: params, headers: headers) }
     # subject { post(api_v1_articles_path, params: params) }
 
-    context "適切なパラメータを送信したとき" do
-      let(:params) { { article: FactoryBot.attributes_for(:article) } }
-      let(:headers) { current_user.create_new_auth_token }
-      let!(:current_user) { create(:user) }
+    let(:headers) { current_user.create_new_auth_token }
+    let!(:current_user) { create(:user) }
+
+    context "公開記事を作成するとき" do
+      let(:params) { { article: FactoryBot.attributes_for(:article, state: "release") } }
+
       it "記事のレコードが作成できる" do
         # subject
         # binding.pry
@@ -77,6 +92,20 @@ RSpec.describe "Articles", type: :request do
         res = JSON.parse(response.body)
         expect(res["title"]).to eq params[:article][:title]
         expect(res["body"]).to eq params[:article][:body]
+        expect(res["state"]).to eq "release"
+        expect(response).to have_http_status(:ok)
+      end
+    end
+
+    context "下書き記事を作成するとき" do
+      let(:params) { { article: FactoryBot.attributes_for(:article, state: "draft") } }
+
+      it "下書きを作成する" do
+        expect { subject }.to change { Article.count }.by(1)
+        # binding.pry
+        res = JSON.parse(response.body)
+
+        expect(res["state"]).to eq "draft"
         expect(response).to have_http_status(:ok)
       end
     end
@@ -90,18 +119,20 @@ RSpec.describe "Articles", type: :request do
     let(:headers) { current_user.create_new_auth_token }
     let!(:current_user) { create(:user) }
     let(:params) do
-      { article: { body: "xxxxxx", title: "yyyyyyyyyyy" } }
+      { article: { body: "xxxxxx", title: "yyyyyyyyyyy", state: "release" } }
       # { article: FactoryBot.attributes_for(:article)}
     end
     # before { allow_any_instance_of(Api::V1::BaseApiController).to receive(:dummy).and_return(current_user) }
 
     context "ログインユーザーの記事があるとき" do
-      let(:article) { create(:article, user: current_user) }
+      let(:article) { create(:article, user: current_user, state: "draft") }
       it "記事が更新できる" do
         # subject
         # binding.pry
         expect { subject }.to change { Article.find(article_id).body }.from(article.body).to(params[:article][:body]) &
-                              change { Article.find(article_id).title }.from(article.title).to(params[:article][:title])
+                              change { Article.find(article_id).title }.from(article.title).to(params[:article][:title]) &
+                              change { Article.find(article_id).state }.from(article.state).to(params[:article][:state])
+
         expect(response).to have_http_status(:ok)
 
         # binding.pry
