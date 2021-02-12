@@ -16,7 +16,7 @@ RSpec.describe "Drafts", type: :request do
     let!(:article6) { create(:article, updated_at: 6.days.ago, state: 0, user: current_user) }
 
     # before { create_list(:article, 3)}
-    it "公開しているとき、更新順に記事を取得できる" do
+    it "下書き状態のとき、更新順に記事を取得できる" do
       subject
       # binding.pry
       res = JSON.parse(response.body)
