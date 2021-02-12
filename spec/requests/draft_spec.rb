@@ -17,7 +17,7 @@ RSpec.describe "Drafts", type: :request do
 
     # before { create_list(:article, 3)}
     it "公開しているとき、更新順に記事を取得できる" do
-      # subject
+      subject
       # binding.pry
       res = JSON.parse(response.body)
       # binding.pry
@@ -47,7 +47,7 @@ RSpec.describe "Drafts", type: :request do
         let(:article) { create(:article, state: 0, user: current_user) }
 
         it "指定したidの詳細な記事を取得できる" do
-          # subject
+          subject
           # binding.pry
           res = JSON.parse(response.body)
 
