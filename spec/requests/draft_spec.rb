@@ -56,8 +56,7 @@ RSpec.describe "Drafts", type: :request do
           expect(res["title"]).to eq article.title
           expect(res["body"]).to eq article.body
           expect(res["updated_at"]).to be_present
-          expect(res["user"]["id"]).to eq article.user.id
-          expect(res["user"].keys).to eq ["id", "name", "email"]
+          expect(res["user_id"]).to eq article.user.id
         end
       end
 
