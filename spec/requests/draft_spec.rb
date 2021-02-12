@@ -2,11 +2,11 @@ require "rails_helper"
 
 RSpec.describe "Drafts", type: :request do
   describe "GET /api/v1/articles/drafts" do
-    subject { get(api_v1_articles_drafts_path ,headers: headers) }
+    subject { get(api_v1_articles_drafts_path, headers: headers) }
 
-    let(:headers) { current_user.create_new_auth_token}
-    let(:current_user) { create(:user)}
-    let(:other_user){ create(:user)}
+    let(:headers) { current_user.create_new_auth_token }
+    let(:current_user) { create(:user) }
+    let(:other_user) { create(:user) }
 
     let!(:article1) { create(:article, updated_at: 1.days.ago, state: 0, user: current_user) }
     let!(:article2) { create(:article, updated_at: 2.days.ago, state: 1, user: current_user) }
@@ -15,12 +15,10 @@ RSpec.describe "Drafts", type: :request do
     let!(:article5) { create(:article, updated_at: 5.days.ago, state: 1, user: other_user) }
     let!(:article6) { create(:article, updated_at: 6.days.ago, state: 0, user: current_user) }
 
-
-
     # before { create_list(:article, 3)}
     it "公開しているとき、更新順に記事を取得できる" do
       # subject
-      binding.pry
+      # binding.pry
       res = JSON.parse(response.body)
       # binding.pry
       expect(res.length).to eq 3
@@ -38,14 +36,15 @@ RSpec.describe "Drafts", type: :request do
 
   describe "GET /api/v1/articles/draft/:id" do
     subject { get(api_v1_articles_draft_path(article_id), headers: headers) }
+
     let(:headers) { current_user.create_new_auth_token }
-    let(:current_user) { create(:user)}
+    let(:current_user) { create(:user) }
 
     context "指定した記事のidが存在している" do
       let(:article_id) { article.id }
 
       context "下書き状態" do
-        let(:article) { create(:article, state: 0,user: current_user )}
+        let(:article) { create(:article, state: 0, user: current_user) }
 
         it "指定したidの詳細な記事を取得できる" do
           # subject
@@ -65,7 +64,7 @@ RSpec.describe "Drafts", type: :request do
       context "公開していないとき" do
         let(:article) { create(:article, state: 0) }
 
-        fit "記事を取得できない" do
+        it "記事を取得できない" do
           expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
         end
       end

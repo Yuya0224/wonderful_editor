@@ -17,7 +17,6 @@ Rails.application.routes.draw do
         resources :drafts
       end
       resources :articles
-
     end
   end
 end
