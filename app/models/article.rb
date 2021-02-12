@@ -22,5 +22,5 @@ class Article < ApplicationRecord
   has_many :article_likes, dependent: :destroy
   has_many :comments, dependent: :destroy
 
-  enum state: { draft: 0, release: 1 }
+  enum status: { draft: "draft", published: "published" }
 end

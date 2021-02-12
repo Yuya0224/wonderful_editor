@@ -4,14 +4,14 @@ class Api::V1::ArticlesController < Api::V1::BaseApiController
 
   # GET /articles
   def index
-    articles = Article.where(state: 1).order(updated_at: :DESC)
+    articles = Article.published.order(updated_at: :DESC)
 
     render json: articles, each_serializer: Api::V1::ArticlePreviewSerializer
   end
 
   def show
     # binding.pry
-    article = Article.where(state: 1).find(params[:id])
+    article = Article.published.find(params[:id])
     render json: article, each_serializer: Api::V1::ArticleSerializer
   end
 
@@ -43,6 +43,6 @@ class Api::V1::ArticlesController < Api::V1::BaseApiController
 
     def article_params
       # binding.pry
-      params.require(:article).permit(:body, :title, :state)
+      params.require(:article).permit(:body, :title, :status)
     end
 end
