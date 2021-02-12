@@ -30,26 +30,26 @@ RSpec.describe Article, type: :model do
     it "下書きの記事が作成される" do
       expect(article).to be_valid
 
-      expect(article.state).to eq "draft"
+      expect(article.status).to eq "draft"
       # binding.pry
     end
   end
 
-  context "stateが0のとき" do
-    let(:article) { build(:article, state: 0) }
+  context "statusが下書きのとき" do
+    let(:article) { build(:article, :draft) }
     it "下書きの状態である" do
       expect(article).to be_valid
-      expect(article.state).to eq "draft"
+      expect(article.status).to eq "draft"
       # binding.pry
     end
   end
 
-  context "stateが1のとき" do
-    let(:article) { build(:article, state: 1) }
+  context "statusが公開のとき" do
+    let(:article) { build(:article, :published) }
 
     it "公開の状態である" do
       expect(article).to be_valid
-      expect(article.state).to eq "release"
+      expect(article.status).to eq "published"
       # binding.pry
     end
   end
